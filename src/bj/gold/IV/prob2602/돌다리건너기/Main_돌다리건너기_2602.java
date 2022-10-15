@@ -10,6 +10,7 @@ public class Main_돌다리건너기_2602 {
     static String[] s;
     static int N;
     static int M;
+    static Set<Integer> emptySet = new HashSet<>();
 
 
     public static void main(String[] args) throws Exception {
@@ -20,39 +21,29 @@ public class Main_돌다리건너기_2602 {
         s[1] = br.readLine();
         N = s[0].length();
         M = substr.length();
-        int[][] arr = new int[2][s[0].length()];
-        arr[0][N-1] = s[0].charAt(N-1) == substr.charAt(M-1) ? 1 : 0;
-        arr[1][N-1] = s[1].charAt(N-1) == substr.charAt(M-1) ? 1 : 0;
-        for (int i = N - 1; i >= 0; --i) {
 
+        Map<Character, Set<Integer>> charToInt = new HashMap<>();
+        for (int i = 0; i < M; i++) {
+            Set<Integer> s = charToInt.getOrDefault(substr.charAt(i), new TreeSet<>(Collections.reverseOrder()));
+            s.add(i+1);
+            charToInt.put(substr.charAt(i), s);
         }
 
-        System.out.println(sum(arr, substr.charAt(0)));
-    }
+        int[][] temp = new int[2][M+1];
+        temp[0][0] = temp[1][0] = 1;
+        for (int i = 0; i < N; ++i) {
+            int[][] newTemp = new int[2][];
+            newTemp[0] = temp[0].clone();
+            newTemp[1] = temp[1].clone();
 
-    private static int sum(int[][] arr, char c) {
-        int sum = 0;
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < N; j++) {
-                if(s[i].charAt(j) == c) {
-                    sum += arr[i][j];
+            for (int j = 0; j < 2; j++) {
+                for(int k : charToInt.getOrDefault(s[j].charAt(i), emptySet)) {
+                    newTemp[j][k] += temp[j^1][k-1];
                 }
             }
-        }
-        return sum;
-    }
-
-    static int find(int curIdx, int curPos, int isAngel) {
-        if (curIdx == substr.length()) {
-            return 1;
+            temp = newTemp;
         }
 
-        int sum = 0;
-        char c = substr.charAt(curIdx);
-        for (Integer i : maps[isAngel].get(c)) {
-            if(i < curPos) continue;
-            sum += find(curIdx + 1, i + 1, isAngel ^ 1);
-        }
-        return sum;
+        System.out.println(temp[0][M] + temp[1][M]);
     }
 }
