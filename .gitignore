@@ -94,3 +94,5 @@ local.properties
 ### Eclipse Patch ###
 # Spring Boot Tooling
 .sts4-cache/
+
+src/swea/codebattle/ssafypro/**
